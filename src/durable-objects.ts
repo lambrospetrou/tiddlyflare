@@ -1,6 +1,6 @@
 import { DurableObject } from 'cloudflare:workers';
 import { ApiListWikisResponse, ApiWiki, WikiType } from './types';
-import { SchemaMigration, SchemaMigrations } from './sql-migrations';
+import { SQLSchemaMigration, SQLSchemaMigrations } from 'durable-utils/sql-migrations';
 import { chunkify, mergeArrayBuffers } from './shared';
 import { HTTPException } from 'hono/http-exception';
 
@@ -20,7 +20,7 @@ export interface CfEnv {
 // Durable Objects
 ///////////////////
 
-const TenantMigrations: SchemaMigration[] = [
+const TenantMigrations: SQLSchemaMigration[] = [
 	{
 		idMonotonicInc: 1,
 		description: 'initial version',
@@ -52,16 +52,18 @@ export class TenantDO extends DurableObject {
 	sql: SqlStorage;
 	tenantId: string = '';
 
-	_migrations: SchemaMigrations;
+	_migrations: SQLSchemaMigrations;
 
 	constructor(ctx: DurableObjectState, env: CfEnv) {
 		super(ctx, env);
 		this.env = env;
 		this.sql = ctx.storage.sql;
 
-		this._migrations = new SchemaMigrations({
+		this._migrations = new SQLSchemaMigrations({
 			doStorage: ctx.storage,
 			migrations: TenantMigrations,
+
+			keyNameTrackingLastMigrationID: '_rf_migrations_lastID',
 		});
 
 		ctx.blockConcurrencyWhile(async () => {
@@ -142,7 +144,7 @@ export class TenantDO extends DurableObject {
 	}
 }
 
-const WikiMigrations: SchemaMigration[] = [
+const WikiMigrations: SQLSchemaMigration[] = [
 	{
 		idMonotonicInc: 1,
 		description: 'initial version',
@@ -180,7 +182,7 @@ export class WikiDO extends DurableObject {
 
 	fileSrc: Uint8Array | null = null;
 
-	_migrations: SchemaMigrations;
+	_migrations: SQLSchemaMigrations;
 
 	wikiId: string = '';
 	tenantId: string = '';
@@ -191,9 +193,11 @@ export class WikiDO extends DurableObject {
 		this.storage = ctx.storage;
 		this.sql = ctx.storage.sql;
 
-		this._migrations = new SchemaMigrations({
+		this._migrations = new SQLSchemaMigrations({
 			doStorage: ctx.storage,
 			migrations: WikiMigrations,
+
+			keyNameTrackingLastMigrationID: '_rf_migrations_lastID',
 		});
 
 		// The WikiDO is referenced straight from the eyeball worker visiting URLs
@@ -461,9 +465,11 @@ export class WikiDO extends DurableObject {
 		await this.storage.deleteAll();
 
 		// Reset the migrations to apply next run.
-		this._migrations = new SchemaMigrations({
+		this._migrations = new SQLSchemaMigrations({
 			doStorage: this.ctx.storage,
 			migrations: WikiMigrations,
+
+			keyNameTrackingLastMigrationID: '_rf_migrations_lastID',
 		});
 	}
 

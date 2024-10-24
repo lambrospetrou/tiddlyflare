@@ -1,32 +1,33 @@
 {
-  "name": "tiddlyflare",
-  "version": "0.0.1",
-  "scripts": {
-    "build:js:client:hashed": "esbuild --outdir=./public/ui/static/generated/ \"--loader:.js=jsx\" --bundle --minify-whitespace --format=iife --target=es6 --entry-names=[name].hashed.[hash] --metafile=esbuild-client.meta.json src/client/app.js",
-    "build:js:client": "esbuild --outdir=./public/ui/static/generated/ \"--loader:.js=jsx\" --bundle --minify-whitespace --format=iife --target=es6 --entry-names=[name] --metafile=esbuild-client.meta.json src/client/app.js",
-    "predeploy": "npm run build:js:client",
-    "deploy:staging": "npm run predeploy && wrangler deploy --env staging",
-    "deploy:prod": "npm run predeploy && wrangler deploy --env prod",
-    "dev": "concurrently 'npx wrangler dev --env dev' 'npm run build:js:client -- --watch=forever'",
-    "cf-typegen": "wrangler types",
-    "pretest": "rm -rf ./hurl/tmp/report-json && mkdir -p ./hurl/tmp/report-json",
-    "test": "npx hurl --test --repeat 1 --jobs 1 --report-json ./hurl/tmp/report-json ./hurl/tests",
-    "gen:apikey": "node --experimental-modules ./_tools/gen_api_key.mjs",
-    "LAMBROS-01": "THE TARGETS BELOW ARE ONLY FOR LAMBROS. CREATE YOUR OWN IF YOU FORK!",
-    "LAMBROS-STAGING": "hurl --test --variables-file ./hurl/.env.staging --report-json ./hurl/tmp/report-json ./hurl/tiddly.lambros.dev-upserts.hurl"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240925.0",
-    "@observablehq/plot": "^0.6.16",
-    "@orangeopensource/hurl": "^5.0.1",
-    "concurrently": "^9.0.1",
-    "d3": "^7.9.0",
-    "esbuild": "^0.24.0",
-    "hono": "^4.6.3",
-    "nanoid": "^5.0.7",
-    "preact": "^10.24.2",
-    "preact-custom-element": "^4.3.0",
-    "typescript": "^5.6.2",
-    "wrangler": "^3.80.2"
-  }
+	"name": "tiddlyflare",
+	"version": "0.0.1",
+	"scripts": {
+		"build:js:client:hashed": "esbuild --outdir=./public/ui/static/generated/ \"--loader:.js=jsx\" --bundle --minify-whitespace --format=iife --target=es6 --entry-names=[name].hashed.[hash] --metafile=esbuild-client.meta.json src/client/app.js",
+		"build:js:client": "esbuild --outdir=./public/ui/static/generated/ \"--loader:.js=jsx\" --bundle --minify-whitespace --format=iife --target=es6 --entry-names=[name] --metafile=esbuild-client.meta.json src/client/app.js",
+		"predeploy": "npm run build:js:client",
+		"deploy:staging": "npm run predeploy && wrangler deploy --env staging",
+		"deploy:prod": "npm run predeploy && wrangler deploy --env prod",
+		"dev": "concurrently 'npx wrangler dev --env dev' 'npm run build:js:client -- --watch=forever'",
+		"cf-typegen": "wrangler types",
+		"pretest": "rm -rf ./hurl/tmp/report-json && mkdir -p ./hurl/tmp/report-json",
+		"test": "npx hurl --test --repeat 1 --jobs 1 --report-json ./hurl/tmp/report-json ./hurl/tests",
+		"gen:apikey": "node --experimental-modules ./_tools/gen_api_key.mjs",
+		"LAMBROS-01": "THE TARGETS BELOW ARE ONLY FOR LAMBROS. CREATE YOUR OWN IF YOU FORK!",
+		"LAMBROS-STAGING": "hurl --test --variables-file ./hurl/.env.staging --report-json ./hurl/tmp/report-json ./hurl/tiddly.lambros.dev-upserts.hurl"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20240925.0",
+		"@observablehq/plot": "^0.6.16",
+		"@orangeopensource/hurl": "^5.0.1",
+		"concurrently": "^9.0.1",
+		"d3": "^7.9.0",
+		"durable-utils": "^0.1.1",
+		"esbuild": "^0.24.0",
+		"hono": "^4.6.3",
+		"nanoid": "^5.0.7",
+		"preact": "^10.24.2",
+		"preact-custom-element": "^4.3.0",
+		"typescript": "^5.6.2",
+		"wrangler": "^3.80.2"
+	}
 }

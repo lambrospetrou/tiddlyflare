@@ -73,10 +73,6 @@ I often refresh the page to make sure everything is reset, so for ease of use yo
 The admin UI allows you to list, delete, and create redirection rules.
 Soon, the UI will also show analytics and statistics about the visits of these links, which was one of the motivations doing the project in the first place.
 
-## API
-
-_Coming soon..._
-
 ## Architecture
 
 How are Durable Objects used in this project?
